@@ -18,7 +18,7 @@ def login():
     
 def test_login (login):
     page = login
-    assert page.wait_for_url('https://www.saucedemo.com/inventory.html'), "Login has failed"
+    assert 'https://www.saucedemo.com/inventory.html' in page.url, "Login has failed"
 
 
      
