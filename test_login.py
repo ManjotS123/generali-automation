@@ -18,7 +18,7 @@ def login():
     
 def test_login (login):
     page = login
-    assert page.is_visible('[data-test="open-menu"]'), "Login has failed"
+    assert page.wait_for_url('https://www.saucedemo.com/inventory.html'), "Login has failed"
 
 
      
