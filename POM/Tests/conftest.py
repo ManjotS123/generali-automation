@@ -38,4 +38,30 @@ def checkout(cart):
     
     checkout.checkout_info(fname, lname, pcode)
     
-    yield page    
+    yield page   
+
+#item selectors on the home page
+Item_home_selectors = [
+    '[data-test="add-to-cart-sauce-labs-backpack"]',
+    '[data-test="add-to-cart-sauce-labs-bike-light"]',
+    '[data-test="add-to-cart-sauce-labs-bolt-t-shirt"]',
+    '[data-test="add-to-cart-sauce-labs-fleece-jacket"]',
+    '[data-test="add-to-cart-sauce-labs-onesie"]',
+    '[data-test="add-to-cart-test.allthethings()-t-shirt-(red)"]'
+
+]
+
+#item selectors on their respective page i.e after clicking the item
+
+item_selectors = [
+    
+    '[data-test="item-4-title-link"]',
+    '[data-test="item-0-title-link"]',
+    '[data-test="item-1-title-link"]',
+    '[data-test="item-5-title-link"]',
+    '[data-test="item-2-title-link"]',
+    '[data-test="item-3-title-link"]'
+]
+
+
+
