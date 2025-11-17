@@ -1,5 +1,6 @@
 import pytest
 import os
+import re
 from playwright.sync_api import sync_playwright, Page
 from Pages.login import Login_page
 from Pages.cart import Cart
@@ -64,6 +65,10 @@ item_selectors = [
     '[data-test="item-3-title-link"]'
 ]
 
+def sanitize_filename(name: str) -> str:
+    # Removes characters illegal in Windows filenames
+    return re.sub(r'[<>:"/\\|?*\[\]= ]+', "_", name)
+
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -84,13 +89,17 @@ def pytest_runtest_makereport(item, call):
             # Create screenshot folder
             screenshot_dir = os.path.join("Screenshots", "screenshots")
             os.makedirs(screenshot_dir, exist_ok=True)
-
+             
             status = "PASSED" if report.passed else "FAILED"
+            
+            safe_test_name = sanitize_filename(item.name)
+            
             screenshot_path = os.path.join(
                 screenshot_dir,
                 f"{item.name}_{status}.png"
             )
 
+             
             try:
                 page.wait_for_load_state('networkidle')
                 page.screenshot(path=screenshot_path, full_page=True)
