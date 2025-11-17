@@ -1,5 +1,6 @@
 import pytest
-from playwright.sync_api import sync_playwright
+import os
+from playwright.sync_api import sync_playwright, Page
 from Pages.login import Login_page
 from Pages.cart import Cart
 from Pages.checkout import Checkout
@@ -64,4 +65,36 @@ item_selectors = [
 ]
 
 
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
 
+    # Only take screenshots at the end of the test (not setup/teardown)
+    if report.when == "call":
+        page = None
+
+        # Find the Playwright Page object in fixtures
+        for fixture_val in item.funcargs.values():
+            if isinstance(fixture_val, Page):
+                page = fixture_val
+                break
+
+        if page:
+            # Create screenshot folder
+            screenshot_dir = os.path.join("Screenshots", "screenshots")
+            os.makedirs(screenshot_dir, exist_ok=True)
+
+            status = "PASSED" if report.passed else "FAILED"
+            screenshot_path = os.path.join(
+                screenshot_dir,
+                f"{item.name}_{status}.png"
+            )
+
+            try:
+                page.screenshot(path=screenshot_path)
+            except Exception as e:
+                print(f"[HOOK] Screenshot failed: {e}")
+
+            # Attach screenshot path into JUnit XML file
+            report.sections.append(("screenshot", screenshot_path))
